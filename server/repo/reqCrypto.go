@@ -13,6 +13,16 @@ import (
 )
 
 func Insert(ctx context.Context, collection *mongo.Collection, crypto model.CryptoItem) (*string, error) {
+	data := &model.CryptoItem{}
+	filter := bson.M{"name": crypto.Name}
+	readed := collection.FindOne(ctx, filter)
+
+	if err := readed.Decode(data); err == nil {
+		return nil, status.Errorf(
+			codes.AlreadyExists, fmt.Sprintf("crypto already exists: %v", err),
+		)
+	}
+
 	res, err := collection.InsertOne(ctx, crypto)
 
 	if err != nil {
@@ -53,13 +63,12 @@ func Read(ctx context.Context, collection *mongo.Collection, cryptoId string) (*
 func Update(ctx context.Context, collection *mongo.Collection, crypto *model.CryptoItem) (*model.CryptoItem, error) {
 
 	filter := bson.M{"_id": crypto.ID}
-	data, err := collection.ReplaceOne(ctx, filter, crypto)
+	_, err := collection.ReplaceOne(ctx, filter, crypto)
 	if err != nil {
 		return nil, status.Errorf(
 			codes.Internal, fmt.Sprintf("cannot update object %v", err),
 		)
 	}
-	fmt.Println(data, "Updated data")
 	return crypto, nil
 }
 
@@ -88,4 +97,14 @@ func Delete(ctx context.Context, collection *mongo.Collection, cryptoId string) 
 		)
 	}
 	return &cryptoId, nil
+}
+
+func List(ctx context.Context, collection *mongo.Collection) (*mongo.Cursor, error) {
+
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintln(err))
+	}
+	// An expression with defer will be called at the end of the function
+	return cursor, nil
 }

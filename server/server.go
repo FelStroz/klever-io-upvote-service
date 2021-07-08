@@ -29,11 +29,15 @@ func (*server) InsertCrypto(ctx context.Context, req *cryptopb.InsertCryptoReque
 
 	data := model.CryptoItem{
 		Name:     cryptoName,
-		Upvote:   0,
-		Downvote: 0,
+		Upvote:   1,
+		Downvote: 1,
 	}
 
-	res, _ := repository.Insert(context.Background(), collection, data)
+	res, err := repository.Insert(context.Background(), collection, data)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &cryptopb.CryptoID{
 		Id: *res,
@@ -43,7 +47,11 @@ func (*server) InsertCrypto(ctx context.Context, req *cryptopb.InsertCryptoReque
 func (*server) ReadCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptopb.Crypto, error) {
 	fmt.Println("Read crypto request")
 	cryptoID := req.Id
-	data, _ := repository.Read(context.Background(), collection, cryptoID)
+	data, err := repository.Read(context.Background(), collection, cryptoID)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &cryptopb.Crypto{
 		Id:       data.ID.Hex(),
@@ -56,11 +64,21 @@ func (*server) ReadCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptop
 func (*server) UpdateCrypto(ctx context.Context, req *cryptopb.UpdateCryptoRequest) (*cryptopb.UpdateCryptoResponse, error) {
 	fmt.Println("Update crypto request")
 	crypto := req
-	data, _ := repository.Read(context.Background(), collection, crypto.Id)
-	data.Upvote = crypto.Upvote
-	data.Downvote = crypto.Downvote
+	data, err := repository.Read(context.Background(), collection, crypto.Id)
 
-	res, _ := repository.Update(context.Background(), collection, data)
+	if err != nil {
+		return nil, err
+	}
+
+	data.Upvote += crypto.Upvote
+	data.Downvote += crypto.Downvote
+
+	res, err := repository.Update(context.Background(), collection, data)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &cryptopb.UpdateCryptoResponse{
 		Crypto: &cryptopb.Crypto{
 			Id:       res.ID.Hex(),
@@ -72,25 +90,47 @@ func (*server) UpdateCrypto(ctx context.Context, req *cryptopb.UpdateCryptoReque
 }
 
 func (*server) DeleteCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptopb.CryptoID, error) {
-	fmt.Println("Delete user request")
+	fmt.Println("Delete crypto request")
 	cryptoID := req.Id
-	res, _ := repository.Delete(context.Background(), collection, cryptoID)
+	res, err := repository.Delete(context.Background(), collection, cryptoID)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &cryptopb.CryptoID{
 		Id: *res,
 	}, nil
 }
 
-//func (*server) ListCrypto(ctx context.Context, req *cryptopb.ListCryptoRequest) (*cryptopb.ListCryptoResponse, error) {
-//fmt.Println("List user request")
-//cryptoID := req.GetCryptoId()
-//res, _ := repository.Delete(context.Background(), collection, cryptoID)
-//var res []*grpc.User
-//	for _, u := range *users {
-//		res = append(res, u.ToGRPC())
-//	}
-//	return &grpc.ListUserRes{Users: res}, nil
-//return &userpb.DeleteUserResponse{UserId: *res}, nil
-//}
+func (*server) ListCrypto(req *cryptopb.ListCryptoRequest, stream cryptopb.CryptoService_ListCryptoServer) error {
+	fmt.Println("List crypto request")
+
+	data := &model.CryptoItem{}
+	res, err := repository.List(context.Background(), collection)
+
+	if err != nil {
+		return err
+	}
+
+	defer res.Close(context.Background())
+	for res.Next(context.Background()) {
+		err := res.Decode(data)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(data)
+		stream.Send(&cryptopb.ListCryptoResponse{
+			Crypto: &cryptopb.Crypto{
+				Id:       data.ID.Hex(),
+				Name:     data.Name,
+				Upvote:   data.Upvote,
+				Downvote: data.Downvote,
+			},
+		})
+	}
+	return nil
+}
 
 // Connect to MongoDB
 func connection() (*mongo.Client, error) {
@@ -107,9 +147,9 @@ func connection() (*mongo.Client, error) {
 func serverRun() {
 	client, _ := connection()
 	collection = client.Database(configDB.Db.MongoDB).Collection("crypto")
-	lis, err := net.Listen("tcp", "0.0.0.0:50051")
+	lis, err := net.Listen("tcp", "0.0.0.0:4040")
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Fatalf("failed to listen: %v", err)
 	}
 
 	opts := []grpc.ServerOption{}
@@ -117,38 +157,54 @@ func serverRun() {
 	cryptopb.RegisterCryptoServiceServer(s, &server{})
 
 	go func() {
-		fmt.Println("Starting server...")
+		fmt.Println("Starting server on port 4040...")
 		if err := s.Serve(lis); err != nil {
-			log.Fatalf("Failed to start server: %v", err)
+			log.Fatalf("failed to start server: %v", err)
 		}
 
 	}()
 
 	// --------------------------------------------------------------------------------------------------------------
-	cc, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Could not connect: %v", err)
-	}
-	defer cc.Close()
+	//cc, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
+	//if err != nil {
+	//	log.Fatalf("could not connect: %v", err)
+	//}
+	//defer cc.Close()
 
-	c := cryptopb.NewCryptoServiceClient(cc)
+	//c := cryptopb.NewCryptoServiceClient(cc)
 	// --------------------------------------------------------------------------------------------------------------
 	//createCryptoRes, err := c.InsertCrypto(context.Background(), &cryptopb.InsertCryptoRequest{Name: "Bitcoin"})
-	ReadedCryptoRes, err := c.ReadCrypto(context.Background(), &cryptopb.CryptoID{Id: "60e68ef626446739d78c566a"})
+	//ReadedCryptoRes, err := c.ReadCrypto(context.Background(), &cryptopb.CryptoID{Id: "60e751887d3b2a8b59812950"})
+	//UpdatedCryptoRes, err := c.UpdateCrypto(context.Background(), &cryptopb.UpdateCryptoRequest{Id: "60e751887d3b2a8b59812950", Upvote: 1, Downvote: 0})
+	//DeletedCryptoRes, err := c.DeleteCrypto(context.Background(), &cryptopb.CryptoID{Id: "60e751887d3b2a8b59812950"})
+	// Call ListBlogs that returns a stream
+	//stream, err := c.ListCrypto(context.Background(), &cryptopb.ListCryptoRequest{})
+	// Check for errors
+	// Start iterating
+	//for {
+	//res, err := stream.Recv()
+	//if err == io.EOF {
+	//	break
+	//}
+	//if err != nil {
+	//	return log.Println(err)
+	//}
+	//	fmt.Println(res.GetCrypto())
+	//}
 
-	if err != nil {
-		log.Fatalf("Unexpected error: %v", err)
-	}
-
+	//if err != nil {
+	//	log.Println(err)
+	//} else {
 	//fmt.Printf("Crypto has been created: %v", createCryptoRes)
-	fmt.Printf("Crypto: %v", ReadedCryptoRes)
+	//fmt.Printf("Crypto: %v", ReadedCryptoRes)
+	//fmt.Printf("Crypto has been updated: %v", UpdatedCryptoRes)
+	//fmt.Printf("Crypto has been deleted: %v", DeletedCryptoRes)
+	//}
 	// --------------------------------------------------------------------------------------------------------------
 
-	// Wait for exit
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Interrupt)
 
-	// Signal is received
 	<-ch
 	s.Stop()
 	lis.Close()

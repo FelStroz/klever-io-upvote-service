@@ -29,16 +29,16 @@ message CryptoID {
   string id = 1;
 }
 
-//message ListCryptoRequest {}
+message ListCryptoRequest {}
 
-//message ListCryptoResponse {
-  //repeated Crypto crypto = 1;
-//}
+message ListCryptoResponse {
+  Crypto crypto = 1;
+}
 
 service CryptoService {
   rpc InsertCrypto (InsertCryptoRequest) returns (CryptoID);
   rpc ReadCrypto (CryptoID) returns (Crypto);
   rpc UpdateCrypto (UpdateCryptoRequest) returns (UpdateCryptoResponse);
   rpc DeleteCrypto (CryptoID) returns (CryptoID);
-  //rpc ListCrypto (ListCryptoRequest) returns (ListCryptoResponse);
+  rpc ListCrypto (ListCryptoRequest) returns (stream ListCryptoResponse);
 }
