@@ -16,6 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 var collection *mongo.Collection
@@ -155,52 +156,17 @@ func serverRun() {
 	opts := []grpc.ServerOption{}
 	s := grpc.NewServer(opts...)
 	cryptopb.RegisterCryptoServiceServer(s, &server{})
-
+	reflection.Register(s)
 	go func() {
 		fmt.Println("Starting server on port 4040...")
 		if err := s.Serve(lis); err != nil {
 			log.Fatalf("failed to start server: %v", err)
+		} else {
+			fmt.Println("Server started successfully!")
+
 		}
 
 	}()
-
-	// --------------------------------------------------------------------------------------------------------------
-	//cc, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
-	//if err != nil {
-	//	log.Fatalf("could not connect: %v", err)
-	//}
-	//defer cc.Close()
-
-	//c := cryptopb.NewCryptoServiceClient(cc)
-	// --------------------------------------------------------------------------------------------------------------
-	//createCryptoRes, err := c.InsertCrypto(context.Background(), &cryptopb.InsertCryptoRequest{Name: "Bitcoin"})
-	//ReadedCryptoRes, err := c.ReadCrypto(context.Background(), &cryptopb.CryptoID{Id: "60e751887d3b2a8b59812950"})
-	//UpdatedCryptoRes, err := c.UpdateCrypto(context.Background(), &cryptopb.UpdateCryptoRequest{Id: "60e751887d3b2a8b59812950", Upvote: 1, Downvote: 0})
-	//DeletedCryptoRes, err := c.DeleteCrypto(context.Background(), &cryptopb.CryptoID{Id: "60e751887d3b2a8b59812950"})
-	// Call ListBlogs that returns a stream
-	//stream, err := c.ListCrypto(context.Background(), &cryptopb.ListCryptoRequest{})
-	// Check for errors
-	// Start iterating
-	//for {
-	//res, err := stream.Recv()
-	//if err == io.EOF {
-	//	break
-	//}
-	//if err != nil {
-	//	return log.Println(err)
-	//}
-	//	fmt.Println(res.GetCrypto())
-	//}
-
-	//if err != nil {
-	//	log.Println(err)
-	//} else {
-	//fmt.Printf("Crypto has been created: %v", createCryptoRes)
-	//fmt.Printf("Crypto: %v", ReadedCryptoRes)
-	//fmt.Printf("Crypto has been updated: %v", UpdatedCryptoRes)
-	//fmt.Printf("Crypto has been deleted: %v", DeletedCryptoRes)
-	//}
-	// --------------------------------------------------------------------------------------------------------------
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Interrupt)
