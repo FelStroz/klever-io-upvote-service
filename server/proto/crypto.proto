@@ -5,19 +5,20 @@ package crypto;
 option go_package = "./";
 
 message Crypto {
-  uint64 id = 1;
+  string id = 1;
   string name = 2;
   int32 upvote = 3;
   int32 downvote = 4;
 }
 
 message InsertCryptoRequest {
-    Crypto crypto = 1;
+    string name = 1;
 }
 
 message UpdateCryptoRequest {
-  int32 upvote = 1;
-  int32 downvote = 2;
+  string id = 1;
+  int32 upvote = 2;
+  int32 downvote = 3;
 }
 
 message UpdateCryptoResponse {
@@ -25,19 +26,19 @@ message UpdateCryptoResponse {
 }
 
 message CryptoID {
-  uint64 id = 1;
+  string id = 1;
 }
 
-message ListCryptoRequest {}
+//message ListCryptoRequest {}
 
-message ListCryptoResponse {
-  repeated Crypto crypto = 1;
-}
+//message ListCryptoResponse {
+  //repeated Crypto crypto = 1;
+//}
 
 service CryptoService {
   rpc InsertCrypto (InsertCryptoRequest) returns (CryptoID);
   rpc ReadCrypto (CryptoID) returns (Crypto);
   rpc UpdateCrypto (UpdateCryptoRequest) returns (UpdateCryptoResponse);
   rpc DeleteCrypto (CryptoID) returns (CryptoID);
-  rpc ListCrypto (ListCryptoRequest) returns (ListCryptoResponse);
+  //rpc ListCrypto (ListCryptoRequest) returns (ListCryptoResponse);
 }

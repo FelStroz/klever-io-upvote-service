@@ -9,11 +9,13 @@ type DBSettings struct {
 	MongoDB  string
 }
 
-var db DBSettings
+var Db DBSettings
 
 func init() {
-	mongoURI := fmt.Sprintf("mongodb://%v:%v", "localhost", "27017")
-	db = DBSettings{
+	//mongoURI := fmt.Sprintf("mongodb://%v:%v", "localhost", "27017")
+	mongoURI := "mongodb+srv://eu:1234qwer@cluster0.ogm0x.mongodb.net/cryptos?retryWrites=true&w=majority"
+	fmt.Sprintln("")
+	Db = DBSettings{
 		MongoURI: mongoURI,
 		MongoDB:  "cryptos",
 	}

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	model "klever-io-upvote-service/server/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,58 +12,54 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type cryptoItem struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name     string             `bson:"name,omitempty" json:"name,omitempty"`
-	Upvote   int32              `bson:"upvote" json:"upvote"`
-	Downvote int32              `bson:"downvote" json:"downvote"`
-}
-
-func Create(ctx context.Context, collection *mongo.Collection, crypto cryptoItem) (*cryptoItem, error) {
+func Insert(ctx context.Context, collection *mongo.Collection, crypto model.CryptoItem) (*string, error) {
 	res, err := collection.InsertOne(ctx, crypto)
+
 	if err != nil {
 		return nil, status.Errorf(
-			codes.Internal, fmt.Sprintf("Failed to insert data: %v", err),
+			codes.Internal, fmt.Sprintf("failed to insert data: %v", err),
 		)
 	}
 	oid, ok := res.InsertedID.(primitive.ObjectID)
 	if !ok {
 		return nil, status.Errorf(
-			codes.Internal, fmt.Sprintf("Failed to convert ObjectID"),
+			codes.Internal, fmt.Sprintf("failed to convert ObjectID"),
 		)
 	}
-	crypto.ID = oid
-	return &crypto, nil
+
+	oidString := oid.Hex()
+	return &oidString, nil
 }
 
-func Read(ctx context.Context, collection *mongo.Collection, cryptoId string) (*cryptoItem, error) {
+func Read(ctx context.Context, collection *mongo.Collection, cryptoId string) (*model.CryptoItem, error) {
 	oid, err := primitive.ObjectIDFromHex(cryptoId)
 	if err != nil {
 		return nil, status.Errorf(
-			codes.InvalidArgument, fmt.Sprintf("Failed to parse ObjectID"),
+			codes.InvalidArgument, fmt.Sprintf("failed to parse ObjectID"),
 		)
 	}
 
-	data := &cryptoItem{}
+	data := &model.CryptoItem{}
 	filter := bson.M{"_id": oid}
 	res := collection.FindOne(ctx, filter)
 	if err := res.Decode(data); err != nil {
 		return nil, status.Errorf(
-			codes.NotFound, fmt.Sprintf("Cannot find Crypto ID: %v", err),
+			codes.NotFound, fmt.Sprintf("cannot find Crypto ID: %v", err),
 		)
 	}
 	return data, nil
 }
 
-func Update(ctx context.Context, collection *mongo.Collection, crypto *cryptoItem) (*cryptoItem, error) {
+func Update(ctx context.Context, collection *mongo.Collection, crypto *model.CryptoItem) (*model.CryptoItem, error) {
 
 	filter := bson.M{"_id": crypto.ID}
-	_, err := collection.ReplaceOne(ctx, filter, crypto)
+	data, err := collection.ReplaceOne(ctx, filter, crypto)
 	if err != nil {
 		return nil, status.Errorf(
-			codes.Internal, fmt.Sprintf("Cannot update object %v", err),
+			codes.Internal, fmt.Sprintf("cannot update object %v", err),
 		)
 	}
+	fmt.Println(data, "Updated data")
 	return crypto, nil
 }
 
@@ -70,7 +67,7 @@ func Delete(ctx context.Context, collection *mongo.Collection, cryptoId string) 
 	oid, err := primitive.ObjectIDFromHex(cryptoId)
 	if err != nil {
 		return nil, status.Errorf(
-			codes.InvalidArgument, fmt.Sprintf("Failed to parse ObjectID"),
+			codes.InvalidArgument, fmt.Sprintf("failed to parse ObjectID"),
 		)
 	}
 
@@ -80,14 +77,14 @@ func Delete(ctx context.Context, collection *mongo.Collection, cryptoId string) 
 	if err != nil {
 		return nil, status.Errorf(
 			codes.Internal,
-			fmt.Sprintf("Cannot delete object: %v", err),
+			fmt.Sprintf("cannot delete object: %v", err),
 		)
 	}
 
 	if res.DeletedCount == 0 {
 		return nil, status.Errorf(
 			codes.NotFound,
-			fmt.Sprintf("Cannot delete object: %v", err),
+			fmt.Sprintf("cannot delete object: %v", err),
 		)
 	}
 	return &cryptoId, nil
