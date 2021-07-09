@@ -8,6 +8,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
@@ -23,6 +24,7 @@ func main() {
 	conn := cryptopb.NewCryptoServiceClient(connection)
 
 	g := gin.Default()
+	g.Use(cors.Default())
 
 	g.POST("/crypto", func(ctx *gin.Context) {
 		name := ctx.Query("name")
@@ -52,6 +54,11 @@ func main() {
 		for {
 			res, err := stream.Recv()
 			if err == io.EOF {
+				//PRECISA GERAR UM ARRAY PARA ENVIAR SEPARADO
+				ctx.JSON(200, gin.H{
+					"data": gin.H{"id": res.Crypto.Id, "name": res.Crypto.Name, "upvote": res.Crypto.Upvote, "downvote": res.Crypto.Downvote},
+					"erro": nil,
+				})
 				break
 			}
 			if err != nil {
@@ -61,10 +68,7 @@ func main() {
 				})
 				break
 			}
-			ctx.JSON(200, gin.H{
-				"data": gin.H{"id": res.Crypto.Id, "name": res.Crypto.Name, "upvote": res.Crypto.Upvote, "downvote": res.Crypto.Downvote},
-				"erro": nil,
-			})
+			log.Println(res.Crypto)
 		}
 
 	})
