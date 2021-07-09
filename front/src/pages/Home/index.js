@@ -8,6 +8,8 @@ import Theter from '../../assets/Theter.png'
 import Coin from '../../assets/coin.png'
 import './home.css';
 import Card from '../../components/Card';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 function Home() {
   let ref = useRef();
@@ -40,59 +42,59 @@ function Home() {
 
   function sendUpvote(id) {
     fetch(`http://localhost:8000/crypto/${id}?downvote=0&upvote=1`, {
-        "method": "PUT",
-        "headers": {}
-    })
-        .then(response => {
-          setIsNewItems(previousState => !previousState);
-        })
-        .catch(err => {
-            console.error(err);
-        });
-}
-
-function sendDownvote(id) {
-  fetch(`http://localhost:8000/crypto/${id}?downvote=1&upvote=0`, {
       "method": "PUT",
       "headers": {}
-  })
+    })
       .then(response => {
         setIsNewItems(previousState => !previousState);
       })
       .catch(err => {
-          console.error(err);
+        console.error(err);
       });
-}
+  }
 
-useEffect(() => {
-  getList().then((res) => {
-    setList(res.data);
-  }).catch(e => {
-    console.log(e)
-  })
-}, [isNewItems])
+  function sendDownvote(id) {
+    fetch(`http://localhost:8000/crypto/${id}?downvote=1&upvote=0`, {
+      "method": "PUT",
+      "headers": {}
+    })
+      .then(response => {
+        setIsNewItems(previousState => !previousState);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+
+  useEffect(() => {
+    getList().then((res) => {
+      setList(res.data);
+    }).catch(e => {
+      console.log(e)
+    })
+  }, [isNewItems])
 
   return (
-      <div style={{ display: 'flex', flexDirection: 'row', width: '100vw', padding: '2rem'}}>
-        {
-          !loading ?
-            list.map(cryptos => {
-              return <Card ref={ref} key={cryptos.id}
-                image={
-                  (cryptos.name.toLowerCase() === "binance coin") ? Binancecoin
-                    : (cryptos.name.toLowerCase() === "cardano") ? Cardano
-                      : (cryptos.name.toLowerCase() === "ethereum") ? Ethereum
-                        : (cryptos.name.toLowerCase() === "litcoin") ? Litcoin
-                          : (cryptos.name.toLowerCase() === "theter") ? Theter
-                            : (cryptos.name.toLowerCase() === "bitcoin") ? Bitcoin
-                              : Coin}
-                name={cryptos.name} upvotes={cryptos.upvote} downvotes={cryptos.downvote} id={cryptos.id} sendUpvote={sendUpvote} sendDownvote={sendDownvote}/>
-            })
-            :
-            <div />
-        }
-        
-      </div>
+
+    <div style={{ display: 'flex', flexDirection: 'row', width: '100vw', padding: '2rem' }}>
+      {
+        !loading ?
+          list.map(cryptos => {
+            return <Card ref={ref} key={cryptos.id}
+              image={
+                (cryptos.name.toLowerCase() === "binance coin") ? Binancecoin
+                  : (cryptos.name.toLowerCase() === "cardano") ? Cardano
+                    : (cryptos.name.toLowerCase() === "ethereum") ? Ethereum
+                      : (cryptos.name.toLowerCase() === "litcoin") ? Litcoin
+                        : (cryptos.name.toLowerCase() === "theter") ? Theter
+                          : (cryptos.name.toLowerCase() === "bitcoin") ? Bitcoin
+                            : Coin}
+              name={cryptos.name} upvotes={cryptos.upvote} downvotes={cryptos.downvote} id={cryptos.id} sendUpvote={sendUpvote} sendDownvote={sendDownvote} />
+          })
+          :
+          <div />
+      }
+    </div>
   );
 }
 
