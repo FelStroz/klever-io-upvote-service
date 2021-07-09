@@ -23,7 +23,9 @@ code {
 }
 
 #root {
-    width: 50%;
+    overflow-y: auto;
+    width: auto;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;

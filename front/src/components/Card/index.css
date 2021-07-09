@@ -5,10 +5,11 @@
     padding: 0rem 5rem;
     box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2);
     transform-style: preserve-3d;
+    margin-left: 30px;
   }
   
   .crypto {
-    min-height: 25vh; /*35*/
+    min-height: 22vh; /*35*/
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,6 +44,7 @@
     padding: 1rem 0rem;
     color: #585858;
     font-weight: bold;
+    cursor: pointer;
   }
 
   .info {

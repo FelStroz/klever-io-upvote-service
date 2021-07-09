@@ -50,15 +50,10 @@ func main() {
 				"erro": fmt.Sprint(err),
 			})
 		}
-
+		list := make([]*cryptopb.Crypto, 0)
 		for {
 			res, err := stream.Recv()
 			if err == io.EOF {
-				//PRECISA GERAR UM ARRAY PARA ENVIAR SEPARADO
-				ctx.JSON(200, gin.H{
-					"data": gin.H{"id": res.Crypto.Id, "name": res.Crypto.Name, "upvote": res.Crypto.Upvote, "downvote": res.Crypto.Downvote},
-					"erro": nil,
-				})
 				break
 			}
 			if err != nil {
@@ -68,8 +63,12 @@ func main() {
 				})
 				break
 			}
-			log.Println(res.Crypto)
+			list = append(list, res.Crypto)
 		}
+		ctx.JSON(200, gin.H{
+			"data": list,
+			"erro": nil,
+		})
 
 	})
 	g.GET("/crypto/:id", func(ctx *gin.Context) {
