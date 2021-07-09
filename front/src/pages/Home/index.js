@@ -6,10 +6,10 @@ import Ethereum from '../../assets/etherium.png'
 import Litcoin from '../../assets/Litcoin.png'
 import Theter from '../../assets/Theter.png'
 import Coin from '../../assets/coin.png'
+import Plus from '../../assets/plus.png'
 import './home.css';
 import Card from '../../components/Card';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+import { Link } from "react-router-dom";
 
 function Home() {
   let ref = useRef();
@@ -66,6 +66,20 @@ function Home() {
       });
   }
 
+  function deleteCrypto(id) {
+    fetch(`http://localhost:8000/crypto/${id}`, {
+      "method": "DELETE",
+      "headers": {}
+    })
+      .then(response => {
+        window.location.replace('http://localhost:3000')
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+
+
   useEffect(() => {
     getList().then((res) => {
       setList(res.data);
@@ -75,25 +89,29 @@ function Home() {
   }, [isNewItems])
 
   return (
-
-    <div style={{ display: 'flex', flexDirection: 'row', width: '100vw', padding: '2rem' }}>
-      {
-        !loading ?
-          list.map(cryptos => {
-            return <Card ref={ref} key={cryptos.id}
-              image={
-                (cryptos.name.toLowerCase() === "binance coin") ? Binancecoin
-                  : (cryptos.name.toLowerCase() === "cardano") ? Cardano
-                    : (cryptos.name.toLowerCase() === "ethereum") ? Ethereum
-                      : (cryptos.name.toLowerCase() === "litcoin") ? Litcoin
-                        : (cryptos.name.toLowerCase() === "theter") ? Theter
-                          : (cryptos.name.toLowerCase() === "bitcoin") ? Bitcoin
-                            : Coin}
-              name={cryptos.name} upvotes={cryptos.upvote} downvotes={cryptos.downvote} id={cryptos.id} sendUpvote={sendUpvote} sendDownvote={sendDownvote} />
-          })
-          :
-          <div />
-      }
+    <div>
+      <Link to={'/insert'}>
+        <div className="insertButton"><text className="buttonText">Insert New</text><img className="addImage" draggable="false" src={Plus} alt="plus"></img></div>
+      </Link>
+      <div style={{ display: 'flex', flexDirection: 'row', width: '100vw', padding: '2rem' }}>
+        {
+          !loading ?
+            list.map(cryptos => {
+              return <Card ref={ref} key={cryptos.id}
+                image={
+                  (cryptos.name.toLowerCase() === "binance coin") ? Binancecoin
+                    : (cryptos.name.toLowerCase() === "cardano") ? Cardano
+                      : (cryptos.name.toLowerCase() === "ethereum") ? Ethereum
+                        : (cryptos.name.toLowerCase() === "litcoin") ? Litcoin
+                          : (cryptos.name.toLowerCase() === "theter") ? Theter
+                            : (cryptos.name.toLowerCase() === "bitcoin") ? Bitcoin
+                              : Coin}
+                name={cryptos.name} upvotes={cryptos.upvote} downvotes={cryptos.downvote} id={cryptos.id} sendUpvote={sendUpvote} sendDownvote={sendDownvote} deleteCrypto={deleteCrypto} />
+            })
+            :
+            <div />
+        }
+      </div>
     </div>
   );
 }

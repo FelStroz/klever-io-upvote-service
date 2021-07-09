@@ -1,5 +1,6 @@
 import React from 'react';
 import './index.css';
+import Deletebutton from '../../assets/deletebutton.png';
 
 export default function Card(props) {
     function movementOver() {
@@ -58,7 +59,7 @@ export default function Card(props) {
 
         if (card[0])
             card[0].addEventListener("mouseenter", (e) => {
-                card[0].style.height = '65vh';
+                card[0].style.height = '70vh';
                 card[0].style.width = '25rem';
                 circle[0].style.height = '10rem';
                 circle[0].style.width = '10rem';
@@ -74,7 +75,7 @@ export default function Card(props) {
             })
         if (card[1])
             card[1].addEventListener("mouseenter", (e) => {
-                card[1].style.height = '65vh';
+                card[1].style.height = '70vh';
                 card[1].style.width = '25rem';
                 circle[1].style.height = '10rem';
                 circle[1].style.width = '10rem';
@@ -90,7 +91,7 @@ export default function Card(props) {
             })
         if (card[2])
             card[2].addEventListener("mouseenter", (e) => {
-                card[2].style.height = '65vh';
+                card[2].style.height = '70vh';
                 card[2].style.width = '25rem';
                 circle[2].style.height = '10rem';
                 circle[2].style.width = '10rem';
@@ -106,7 +107,7 @@ export default function Card(props) {
             })
         if (card[3])
             card[3].addEventListener("mouseenter", (e) => {
-                card[3].style.height = '65vh';
+                card[3].style.height = '70vh';
                 card[3].style.width = '25rem';
                 circle[3].style.height = '10rem';
                 circle[3].style.width = '10rem';
@@ -122,7 +123,7 @@ export default function Card(props) {
             })
         if (card[4])
             card[4].addEventListener("mouseenter", (e) => {
-                card[4].style.height = '65vh';
+                card[4].style.height = '70vh';
                 card[4].style.width = '25rem';
                 circle[4].style.height = '10rem';
                 circle[4].style.width = '10rem';
@@ -138,7 +139,7 @@ export default function Card(props) {
             })
         if (card[5])
             card[5].addEventListener("mouseenter", (e) => {
-                card[5].style.height = '65vh';
+                card[5].style.height = '70vh';
                 card[5].style.width = '25rem';
                 circle[5].style.height = '10rem';
                 circle[5].style.width = '10rem';
@@ -154,7 +155,7 @@ export default function Card(props) {
             })
         if (card[6])
             card[6].addEventListener("mouseenter", (e) => {
-                card[6].style.height = '65vh';
+                card[6].style.height = '70vh';
                 card[6].style.width = '25rem';
                 circle[6].style.height = '10rem';
                 circle[6].style.width = '10rem';
@@ -181,7 +182,7 @@ export default function Card(props) {
 
         if (card[0])
             card[0].addEventListener("mouseleave", (e) => {
-                card[0].style.height = '55vh';
+                card[0].style.height = '60vh';
                 card[0].style.width = '20rem';
                 circle[0].style.height = '8rem';
                 circle[0].style.width = '8rem';
@@ -206,7 +207,7 @@ export default function Card(props) {
             })
         if (card[1])
             card[1].addEventListener("mouseleave", (e) => {
-                card[1].style.height = '55vh';
+                card[1].style.height = '60vh';
                 card[1].style.width = '20rem';
                 circle[1].style.height = '8rem';
                 circle[1].style.width = '8rem';
@@ -231,7 +232,7 @@ export default function Card(props) {
             })
         if (card[2])
             card[2].addEventListener("mouseleave", (e) => {
-                card[2].style.height = '55vh';
+                card[2].style.height = '60vh';
                 card[2].style.width = '20rem';
                 circle[2].style.height = '8rem';
                 circle[2].style.width = '8rem';
@@ -257,7 +258,7 @@ export default function Card(props) {
             })
         if (card[3])
             card[3].addEventListener("mouseleave", (e) => {
-                card[3].style.height = '55vh';
+                card[3].style.height = '60vh';
                 card[3].style.width = '20rem';
                 circle[3].style.height = '8rem';
                 circle[3].style.width = '8rem';
@@ -283,7 +284,7 @@ export default function Card(props) {
             })
         if (card[4])
             card[4].addEventListener("mouseleave", (e) => {
-                card[4].style.height = '55vh';
+                card[4].style.height = '60vh';
                 card[4].style.width = '20rem';
                 circle[4].style.height = '8rem';
                 circle[4].style.width = '8rem';
@@ -309,7 +310,7 @@ export default function Card(props) {
             })
         if (card[5])
             card[5].addEventListener("mouseleave", (e) => {
-                card[5].style.height = '55vh';
+                card[5].style.height = '60vh';
                 card[5].style.width = '20rem';
                 circle[5].style.height = '8rem';
                 circle[5].style.width = '8rem';
@@ -335,7 +336,7 @@ export default function Card(props) {
             })
         if (card[6])
             card[6].addEventListener("mouseleave", (e) => {
-                card[6].style.height = '55vh';
+                card[6].style.height = '60vh';
                 card[6].style.width = '20rem';
                 circle[6].style.height = '8rem';
                 circle[6].style.width = '8rem';
@@ -362,11 +363,12 @@ export default function Card(props) {
     }
 
     return (
-        <div className="card" onMouseOver={movementOver} onMouseLeave={movementOut} onMouseEnter={movementIn}>
+        <div className="card" draggable="false" onMouseOver={movementOver} onMouseLeave={movementOut} onMouseEnter={movementIn}>
             <div className="crypto">
                 <div className="circle"></div>
-                <img src={props.image} alt={props.name} className="image"></img>
+                <img src={props.image} alt={props.name} className="image" draggable="false"></img>
             </div>
+            <div className="deleteButton" onClick={() => {props.deleteCrypto(props.id)}}><img className="deleteImage" src={Deletebutton} alt="Delete"></img></div>
             <div className="info">
                 <h1 className="infoh1" >{props.name}</h1>
                 <h3 className="infoh3" style={{ color: 'lightgreen' }} onClick={() => {props.sendUpvote(props.id)}}>Upvotes</h3>

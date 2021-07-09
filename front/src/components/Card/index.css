@@ -1,5 +1,5 @@
 .card {
-    min-height: 55vh; /*80*/
+    min-height: 60vh; /*80*/
     width: 20rem; /*25*/
     border-radius: 30px;
     padding: 0rem 5rem;
@@ -18,6 +18,12 @@
   .crypto img {
     width: 7rem; /*8*/
     z-index: 2;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; 
+     -khtml-user-select: none; 
+       -moz-user-select: none; 
+        -ms-user-select: none; 
+            user-select: none;
   }
   
   .circle {
@@ -35,8 +41,14 @@
   }
   
   .info h1 {
-    font-size: 2.5rem; /*3*/
+    font-size: 2rem; /*3*/
     font-family: 'Poppins';
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; 
+     -khtml-user-select: none; 
+       -moz-user-select: none; 
+        -ms-user-select: none; 
+            user-select: none;
   }
   
   .info h3 {
@@ -45,6 +57,12 @@
     color: #585858;
     font-weight: bold;
     cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; 
+     -khtml-user-select: none; 
+       -moz-user-select: none; 
+        -ms-user-select: none; 
+            user-select: none;
   }
 
   .info {
@@ -52,4 +70,29 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      -webkit-touch-callout: none;
+    -webkit-user-select: none; 
+     -khtml-user-select: none; 
+       -moz-user-select: none; 
+        -ms-user-select: none; 
+            user-select: none;
+  }
+
+  .deleteButton {
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    background: orangered;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .deleteImage {
+    width: 25px;
+    height: 30px;
   }

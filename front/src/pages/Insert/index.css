@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.container h1 {
+    font-family: 'Poppins';
+    font-size: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.buttonInsert {
+    cursor: pointer;
+    background: blue;
+    width: 10rem;
+    height: 3rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    outline: none;
+    border-width: 0px;
+
+}
+
+.buttonInsert:hover {
+    background: teal;
+    transition: all 0.1s ease;
+}
+
+.buttonText {
+    color: whitesmoke;
+    font-family: 'Poppins';
+    font-weight: bolder;
+    font-size: 0.95rem;
+}
