@@ -71,6 +71,17 @@ func (*server) UpdateCrypto(ctx context.Context, req *cryptopb.UpdateCryptoReque
 		return nil, err
 	}
 
+	if crypto.Upvote >= 1 {
+		crypto.Upvote = 1
+		crypto.Downvote = 0
+	} else if crypto.Downvote >= 1 {
+		crypto.Upvote = 0
+		crypto.Downvote = 1
+	} else {
+		crypto.Upvote = 0
+		crypto.Downvote = 0
+	}
+
 	data.Upvote += crypto.Upvote
 	data.Downvote += crypto.Downvote
 
@@ -113,14 +124,13 @@ func (*server) ListCrypto(req *cryptopb.ListCryptoRequest, stream cryptopb.Crypt
 	if err != nil {
 		return err
 	}
-
 	defer res.Close(context.Background())
 	for res.Next(context.Background()) {
 		err := res.Decode(data)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(data)
+
 		stream.Send(&cryptopb.ListCryptoResponse{
 			Crypto: &cryptopb.Crypto{
 				Id:       data.ID.Hex(),
@@ -159,13 +169,10 @@ func serverRun() {
 	reflection.Register(s)
 	go func() {
 		fmt.Println("Starting server on port 4040...")
+		fmt.Println("Server started successfully!")
 		if err := s.Serve(lis); err != nil {
 			log.Fatalf("failed to start server: %v", err)
-		} else {
-			fmt.Println("Server started successfully!")
-
 		}
-
 	}()
 
 	ch := make(chan os.Signal, 1)

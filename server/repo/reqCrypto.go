@@ -103,7 +103,7 @@ func List(ctx context.Context, collection *mongo.Collection) (*mongo.Cursor, err
 
 	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, fmt.Sprintln(err))
+		return nil, status.Errorf(codes.NotFound, fmt.Sprintln(err))
 	}
 	// An expression with defer will be called at the end of the function
 	return cursor, nil
