@@ -8,7 +8,7 @@
 
 # Klever IO Upvote Service
 
-Voltado para quem quer aprender mais sobre Front-end com React
+Service to upvote or downvote a cryptocurrency as a test to Klever IO
 
 ![Platform](https://img.shields.io/npm/l/react?label=GO&logo=go)
 ![](https://img.shields.io/npm/l/react?label=React&logo=react)
@@ -20,10 +20,69 @@ Voltado para quem quer aprender mais sobre Front-end com React
 
 </div>
 
+- ## Instalation
+
+---
+
+- With Makefile
+
+Run the command bellow to start the server
+```shell
+$ make server
+```
+
+And the command bellow to start the client
+```shell
+$ make client
+```
+
+Install all dependencies for the frontend
+```shell
+$ make install-front
+```
+
+Run the frontend
+```shell
+$ make run-front
+```
+
+<br>
+
+If you want tests just run
+```shell
+$ make test
+```
+
+<br>
+
+- Without Makefile
+
+In the root directory run
+```shell
+$ go run server/server.go
+```
+And then
+```shell
+$ go run client/main.go 
+```
+To run the frontend you need to install all dependencies with NPM or yarn
+```shell
+$ cd front
+$ npm i
+$ npm start
+```
+To run the tests run the command bellow
+```shell
+$ cd server
+$ go test -v 
+```
+
+Done.
+
 <div markdown="1" align="end">
 
-Feito por [Felipe Strozberg](https://github.com/FelStroz)
+Made by [Felipe Strozberg](https://github.com/FelStroz)
 
 </div>
 
-### [Voltar ao Início](#klever-io-upvote-service)
+### [Back to the Top](#klever-io-upvote-service)
