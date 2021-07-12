@@ -13,6 +13,13 @@ import (
 )
 
 func Insert(ctx context.Context, collection *mongo.Collection, crypto model.CryptoItem) (*string, error) {
+
+	if crypto.Name == "" {
+		return nil, status.Errorf(
+			codes.InvalidArgument, fmt.Sprintf("crypto name must not be empty"),
+		)
+	}
+
 	data := &model.CryptoItem{}
 	filter := bson.M{"name": crypto.Name}
 	readed := collection.FindOne(ctx, filter)
@@ -42,6 +49,12 @@ func Insert(ctx context.Context, collection *mongo.Collection, crypto model.Cryp
 }
 
 func Read(ctx context.Context, collection *mongo.Collection, cryptoId string) (*model.CryptoItem, error) {
+	if cryptoId == "" {
+		return nil, status.Errorf(
+			codes.InvalidArgument, fmt.Sprintf("crypto id must not be empty"),
+		)
+	}
+
 	oid, err := primitive.ObjectIDFromHex(cryptoId)
 	if err != nil {
 		return nil, status.Errorf(
@@ -73,6 +86,13 @@ func Update(ctx context.Context, collection *mongo.Collection, crypto *model.Cry
 }
 
 func Delete(ctx context.Context, collection *mongo.Collection, cryptoId string) (*string, error) {
+
+	if cryptoId == "" {
+		return nil, status.Errorf(
+			codes.InvalidArgument, fmt.Sprintf("crypto id must not be empty"),
+		)
+	}
+
 	oid, err := primitive.ObjectIDFromHex(cryptoId)
 	if err != nil {
 		return nil, status.Errorf(

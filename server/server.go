@@ -25,7 +25,7 @@ type server struct {
 }
 
 func (*server) InsertCrypto(ctx context.Context, req *cryptopb.InsertCryptoRequest) (*cryptopb.CryptoID, error) {
-	fmt.Println("Insert crypto request")
+	log.Println("Insert crypto request")
 	cryptoName := req.Name
 
 	data := model.CryptoItem{
@@ -46,7 +46,7 @@ func (*server) InsertCrypto(ctx context.Context, req *cryptopb.InsertCryptoReque
 }
 
 func (*server) ReadCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptopb.Crypto, error) {
-	fmt.Println("Read crypto request")
+	log.Println("Read crypto request")
 	cryptoID := req.Id
 	data, err := repository.Read(context.Background(), collection, cryptoID)
 
@@ -63,7 +63,7 @@ func (*server) ReadCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptop
 }
 
 func (*server) UpdateCrypto(ctx context.Context, req *cryptopb.UpdateCryptoRequest) (*cryptopb.UpdateCryptoResponse, error) {
-	fmt.Println("Update crypto request")
+	log.Println("Update crypto request")
 	crypto := req
 	data, err := repository.Read(context.Background(), collection, crypto.Id)
 
@@ -102,7 +102,7 @@ func (*server) UpdateCrypto(ctx context.Context, req *cryptopb.UpdateCryptoReque
 }
 
 func (*server) DeleteCrypto(ctx context.Context, req *cryptopb.CryptoID) (*cryptopb.CryptoID, error) {
-	fmt.Println("Delete crypto request")
+	log.Println("Delete crypto request")
 	cryptoID := req.Id
 	res, err := repository.Delete(context.Background(), collection, cryptoID)
 
@@ -116,7 +116,7 @@ func (*server) DeleteCrypto(ctx context.Context, req *cryptopb.CryptoID) (*crypt
 }
 
 func (*server) ListCrypto(req *cryptopb.ListCryptoRequest, stream cryptopb.CryptoService_ListCryptoServer) error {
-	fmt.Println("List crypto request")
+	log.Println("List crypto request")
 
 	data := &model.CryptoItem{}
 	res, err := repository.List(context.Background(), collection)
@@ -143,7 +143,6 @@ func (*server) ListCrypto(req *cryptopb.ListCryptoRequest, stream cryptopb.Crypt
 	return nil
 }
 
-// Connect to MongoDB
 func connection() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(configDB.Db.MongoURI)
 	ctx, cancel := context.WithTimeout(context.Background(), 10000)

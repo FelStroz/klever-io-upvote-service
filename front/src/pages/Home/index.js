@@ -7,6 +7,7 @@ import Litcoin from '../../assets/Litcoin.png'
 import Theter from '../../assets/Theter.png'
 import Coin from '../../assets/coin.png'
 import Plus from '../../assets/plus.png'
+import Klever from '../../assets/klever.png'
 import './home.css';
 import Card from '../../components/Card';
 import { Link } from "react-router-dom";
@@ -105,7 +106,8 @@ function Home() {
                         : (cryptos.name.toLowerCase() === "litcoin") ? Litcoin
                           : (cryptos.name.toLowerCase() === "theter") ? Theter
                             : (cryptos.name.toLowerCase() === "bitcoin") ? Bitcoin
-                              : Coin}
+                              : (cryptos.name.toLowerCase() === "klever" || cryptos.name.toLowerCase() === "klv") ? Klever
+                                : Coin}
                 name={cryptos.name} upvotes={cryptos.upvote} downvotes={cryptos.downvote} id={cryptos.id} sendUpvote={sendUpvote} sendDownvote={sendDownvote} deleteCrypto={deleteCrypto} />
             })
             :

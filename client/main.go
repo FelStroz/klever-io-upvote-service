@@ -87,11 +87,21 @@ func main() {
 		}
 	})
 	g.PUT("/crypto/:id", func(ctx *gin.Context) {
-		upvote, err := strconv.ParseInt(ctx.Query("upvote"), 10, 32)
+
+		upvoteString, downvoteString := ctx.Query("upvote"), ctx.Query("downvote")
+
+		if upvoteString == "" {
+			upvoteString = "0"
+		}
+		if downvoteString == "" {
+			downvoteString = "0"
+		}
+
+		upvote, err := strconv.ParseInt(upvoteString, 10, 32)
 		if err != nil {
 			ctx.JSON(500, gin.H{"data": nil, "erro": fmt.Sprint(err)})
 		}
-		downvote, err := strconv.ParseInt(ctx.Query("downvote"), 10, 32)
+		downvote, err := strconv.ParseInt(downvoteString, 10, 32)
 		if err != nil {
 			ctx.JSON(500, gin.H{"data": nil, "erro": fmt.Sprint(err)})
 		}
