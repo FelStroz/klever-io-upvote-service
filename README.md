@@ -16,7 +16,7 @@ Voltado para quem quer aprender mais sobre Front-end com React
 
 <br>
 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fbluelabm4%2Fhit-counter&count_bg=%2379C83D&title_bg=%231400FF&icon=bilibili.svg&icon_color=%23E7E7E7&title=Acessos+di%C3%A1rios&edge_flat=false)](https://github.com/FelStroz/klever-io-upvote-service)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FFelStroz%2Fklever-io-upvote-service&count_bg=%2379C83D&title_bg=%23888888&icon=go.svg&icon_color=%235355C9&title=Acessos&edge_flat=false)](https://github.com/FelStroz/klever-io-upvote-service)
 
 </div>
 

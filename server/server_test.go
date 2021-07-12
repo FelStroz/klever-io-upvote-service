@@ -69,7 +69,6 @@ func TestCreateCrypto(t *testing.T) {
 	require.Nil(t, err)
 	assert.NotNil(t, res.GetId())
 
-	//crypto already exists
 	_, err = grpcServer.InsertCrypto(context.Background(), goodReq)
 
 	require.NotNil(t, err)
@@ -113,6 +112,8 @@ func TestReadCrypto(t *testing.T) {
 func TestListCrypto(t *testing.T) {
 	resetMongo()
 	grpcServer := server{}
+
+	var allCryptoID []*cryptopb.CryptoID
 
 	ctx := context.Background()
 	connection, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(connect()))
@@ -161,8 +162,9 @@ func TestListCrypto(t *testing.T) {
 
 	for _, crypto := range cryptos {
 		createRequest := &cryptopb.InsertCryptoRequest{Name: crypto.Name}
-		_, err := grpcServer.InsertCrypto(context.Background(), createRequest)
+		res, err := grpcServer.InsertCrypto(context.Background(), createRequest)
 		require.Nil(t, err)
+		allCryptoID = append(allCryptoID, res)
 	}
 
 	stream, err = client.ListCrypto(ctx, request)
@@ -185,10 +187,10 @@ func TestListCrypto(t *testing.T) {
 
 	require.Nil(t, err)
 	for i, crypto := range cryptos {
-		assert.Equal(t, crypto.GetId(), result[i].GetCrypto().GetId())
-		assert.Equal(t, crypto.GetName(), result[i].GetCrypto().GetName())
-		assert.Equal(t, crypto.GetUpvote(), result[i].GetCrypto().GetUpvote())
-		assert.Equal(t, crypto.GetDownvote(), result[i].GetCrypto().GetDownvote())
+		assert.Equal(t, allCryptoID[i].Id, result[i].GetCrypto().GetId())
+		assert.Equal(t, crypto.Name, result[i].GetCrypto().GetName())
+		assert.Equal(t, int32(1), result[i].GetCrypto().GetUpvote())
+		assert.Equal(t, int32(1), result[i].GetCrypto().GetDownvote())
 	}
 
 }
