@@ -70,7 +70,7 @@ func TestCreateCrypto(t *testing.T) {
 	assert.NotNil(t, res.GetId())
 
 	//crypto already exists
-	res, err = grpcServer.InsertCrypto(context.Background(), goodReq)
+	_, err = grpcServer.InsertCrypto(context.Background(), goodReq)
 
 	require.NotNil(t, err)
 	assert.Equal(t, "rpc error: code = AlreadyExists desc = crypto already exists: <nil>", err.Error())
